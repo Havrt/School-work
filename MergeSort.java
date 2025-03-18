@@ -84,3 +84,5 @@ public class MergeSort {
         System.out.println();
     }
 }
+// Comparing this to the BubbleSort is simple and easy to implement but inefficient for large datasets. 
+// While MergeSort is faster and more efficient for large datasets but requires additional space.
