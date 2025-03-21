@@ -1,88 +1,87 @@
+import java.util.Arrays;
+
 public class MergeSort {
 
-    // Merge function to combine two sorted subarrays
-    public static void merge(int[] arr, int left, int mid, int right) {
-        // Sizes of the two subarrays to be merged
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
+    public static <T extends Comparable<T>> void mergeSort(T[] array) {
+        if (array.length > 1) {
+            // Split the array into two halves
+            int mid = array.length / 2;
 
-        // Temporary arrays to hold the two halves
-        int[] L = new int[n1];
-        int[] R = new int[n2];
-
-        // Copy data to temporary arrays
-        for (int i = 0; i < n1; i++) {
-            L[i] = arr[left + i];
-        }
-        for (int j = 0; j < n2; j++) {
-            R[j] = arr[mid + 1 + j];
-        }
-
-        // Merge the two arrays
-        int i = 0, j = 0; // Initial indices of the two subarrays
-        int k = left; // Initial index of the merged array
-
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                arr[k] = L[i];
-                i++;
-            } else {
-                arr[k] = R[j];
-                j++;
-            }
-            k++;
-        }
-
-        // Copy remaining elements of L[] if any
-        while (i < n1) {
-            arr[k] = L[i];
-            i++;
-            k++;
-        }
-
-        // Copy remaining elements of R[] if any
-        while (j < n2) {
-            arr[k] = R[j];
-            j++;
-            k++;
-        }
-    }
-
-    // MergeSort function to recursively divide and sort the array
-    public static void mergeSort(int[] arr, int left, int right) {
-        if (left < right) {
-            // Find the middle point
-            int mid = left + (right - left) / 2;
+            // Create left and right subarrays
+            T[] leftArray = Arrays.copyOfRange(array, 0, mid);
+            T[] rightArray = Arrays.copyOfRange(array, mid, array.length);
 
             // Recursively sort the two halves
-            mergeSort(arr, left, mid);
-            mergeSort(arr, mid + 1, right);
+            mergeSort(leftArray);
+            mergeSort(rightArray);
 
             // Merge the sorted halves
-            merge(arr, left, mid, right);
+            merge(array, leftArray, rightArray);
         }
     }
 
-    // Main function to test the implementation
+    private static <T extends Comparable<T>> void merge(T[] array, T[] leftArray, T[] rightArray) {
+        int i = 0, j = 0, k = 0;
+
+        // Merge the left and right arrays into the original array
+        while (i < leftArray.length && j < rightArray.length) {
+            if (leftArray[i].compareTo(rightArray[j]) <= 0) {
+                array[k++] = leftArray[i++];
+            } else {
+                array[k++] = rightArray[j++];
+            }
+        }
+
+        // Copy remaining elements of leftArray, if any
+        while (i < leftArray.length) {
+            array[k++] = leftArray[i++];
+        }
+
+        // Copy remaining elements of rightArray, if any
+        while (j < rightArray.length) {
+            array[k++] = rightArray[j++];
+        }
+    }
+
     public static void main(String[] args) {
-        int[] arr = {38, 27, 43, 3, 9, 82, 10};
-        System.out.println("Original array:");
-        printArray(arr);
+        // Test with Integer array
+        Integer[] intArray = {64, 34, 25, 12, 22, 11, 90};
+        mergeSort(intArray);
+        System.out.println("Sorted Integer array: " + Arrays.toString(intArray));
 
-        // Sort the array using MergeSort
-        mergeSort(arr, 0, arr.length - 1);
+        // Test with String array
+        String[] strArray = {"apple", "orange", "banana", "mango", "grape"};
+        mergeSort(strArray);
+        System.out.println("Sorted String array: " + Arrays.toString(strArray));
 
-        System.out.println("Sorted array:");
-        printArray(arr);
-    }
-
-    // Utility function to print an array
-    public static void printArray(int[] arr) {
-        for (int i : arr) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
+        // Test with custom objects
+        Person[] people = {
+            new Person("John", 25),
+            new Person("Alice", 30),
+            new Person("Bob", 20)
+        };
+        mergeSort(people);
+        System.out.println("Sorted Person array: " + Arrays.toString(people));
     }
 }
-// Comparing this to the BubbleSort is simple and easy to implement but inefficient for large datasets. 
-// While MergeSort is faster and more efficient for large datasets but requires additional space.
+
+// Custom class to demonstrate sorting with custom objects
+class Person implements Comparable<Person> {
+    String name;
+    int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public int compareTo(Person other) {
+        return this.name.compareTo(other.name); // Sort by name
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + age + ")";
+    }
+}
