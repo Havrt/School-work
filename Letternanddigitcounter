@@ -1,0 +1,33 @@
+import java.util.Scanner;
+
+public class LetterAndDigitCounter {
+
+    public static void main(String[] args) {
+        // Create a Scanner object to read user input
+        Scanner scanner = new Scanner(System.in);
+
+        // Prompt the user to enter a word or string
+        System.out.print("Enter a word or string: ");
+        String input = scanner.nextLine();
+
+        // Initialize counters for letters and digits
+        int letterCount = 0;
+        int digitCount = 0;
+
+        // Iterate through each character in the input string
+        for (char ch : input.toCharArray()) {
+            if (Character.isLetter(ch)) {
+                letterCount++; // Increment letter count if the character is a letter
+            } else if (Character.isDigit(ch)) {
+                digitCount++; // Increment digit count if the character is a digit
+            }
+        }
+
+        // Display the results
+        System.out.println("Number of letters: " + letterCount);
+        System.out.println("Number of digits: " + digitCount);
+
+        // Close the scanner
+        scanner.close();
+    }
+}
