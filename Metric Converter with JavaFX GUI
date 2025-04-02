@@ -1,0 +1,141 @@
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+public class MetricConverter extends Application {
+
+    private ComboBox<String> fromUnitComboBox;
+    private ComboBox<String> toUnitComboBox;
+    private TextField valueTextField;
+    private Label resultLabel;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Metric Converter");
+
+        // Create UI components
+        Label titleLabel = new Label("Metric Converter");
+        titleLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
+        
+        Label valueLabel = new Label("Value:");
+        valueTextField = new TextField();
+        valueTextField.setPromptText("Enter a number");
+        
+        Label fromLabel = new Label("From:");
+        fromUnitComboBox = new ComboBox<>();
+        fromUnitComboBox.getItems().addAll(
+            "millimeters", "centimeters", "meters", "kilometers",
+            "inches", "feet", "yards", "miles"
+        );
+        fromUnitComboBox.setValue("meters");
+        
+        Label toLabel = new Label("To:");
+        toUnitComboBox = new ComboBox<>();
+        toUnitComboBox.getItems().addAll(
+            "millimeters", "centimeters", "meters", "kilometers",
+            "inches", "feet", "yards", "miles"
+        );
+        toUnitComboBox.setValue("feet");
+        
+        Button convertButton = new Button("Convert");
+        convertButton.setOnAction(e -> convert());
+        
+        resultLabel = new Label();
+        resultLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
+
+        // Set up layout
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(20, 20, 20, 20));
+        grid.setVgap(10);
+        grid.setHgap(10);
+        
+        // Add components to grid
+        grid.add(titleLabel, 0, 0, 2, 1);
+        grid.add(valueLabel, 0, 1);
+        grid.add(valueTextField, 1, 1);
+        grid.add(fromLabel, 0, 2);
+        grid.add(fromUnitComboBox, 1, 2);
+        grid.add(toLabel, 0, 3);
+        grid.add(toUnitComboBox, 1, 3);
+        grid.add(convertButton, 0, 4, 2, 1);
+        grid.add(resultLabel, 0, 5, 2, 1);
+
+        // Set up scene and stage
+        Scene scene = new Scene(grid, 350, 300);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void convert() {
+        try {
+            double value = Double.parseDouble(valueTextField.getText());
+            String fromUnit = fromUnitComboBox.getValue();
+            String toUnit = toUnitComboBox.getValue();
+            
+            // Convert to meters first (as a common base)
+            double meters = convertToMeters(value, fromUnit);
+            
+            // Convert from meters to target unit
+            double result = convertFromMeters(meters, toUnit);
+            
+            resultLabel.setText(String.format("%.2f %s = %.2f %s", 
+                value, fromUnit, result, toUnit));
+        } catch (NumberFormatException e) {
+            resultLabel.setText("Please enter a valid number");
+            resultLabel.setStyle("-fx-text-fill: red; -fx-font-size: 14; -fx-font-weight: bold;");
+        }
+    }
+
+    private double convertToMeters(double value, String fromUnit) {
+        switch (fromUnit.toLowerCase()) {
+            case "millimeters":
+                return value / 1000;
+            case "centimeters":
+                return value / 100;
+            case "meters":
+                return value;
+            case "kilometers":
+                return value * 1000;
+            case "inches":
+                return value * 0.0254;
+            case "feet":
+                return value * 0.3048;
+            case "yards":
+                return value * 0.9144;
+            case "miles":
+                return value * 1609.344;
+            default:
+                throw new IllegalArgumentException("Unknown unit: " + fromUnit);
+        }
+    }
+
+    private double convertFromMeters(double meters, String toUnit) {
+        switch (toUnit.toLowerCase()) {
+            case "millimeters":
+                return meters * 1000;
+            case "centimeters":
+                return meters * 100;
+            case "meters":
+                return meters;
+            case "kilometers":
+                return meters / 1000;
+            case "inches":
+                return meters / 0.0254;
+            case "feet":
+                return meters / 0.3048;
+            case "yards":
+                return meters / 0.9144;
+            case "miles":
+                return meters / 1609.344;
+            default:
+                throw new IllegalArgumentException("Unknown unit: " + toUnit);
+        }
+    }
+}
